@@ -1,12 +1,23 @@
+# (tpg) when ready to ditch zlib
+# add -DZLIB_COMPAT=ON 
+# and adjust major, provides, requires and obsoletes
+
 %global optflags %{optflags} -O3
 
-%define major 2
+%define major 1
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
+%bcond_without compat32
+
+%if %{with compat32}
+%define lib32name lib%{name}%{major}
+%define dev32name lib%{name}-devel
+%endif
+
 # (tpg) enable PGO build
 %ifnarch riscv64
-%bcond_without pgo
+%bcond_with pgo
 %else
 %bcond_with pgo
 %endif
@@ -56,10 +67,10 @@ export LLVM_PROFILE_FILE=%{name}-%p.profile.d
 export LD_LIBRARY_PATH="$(pwd)"
 
 # zlib-ng uses a different macro for library directory.
-# (tpg) use it when to replace zlib	-DZLIB_COMPAT
 %cmake \
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
+	-DZLIB_COMPAT=ON \
 	-G Ninja
 
 %ninja_build
@@ -80,6 +91,7 @@ LDFLAGS="%{ldflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
 %cmake \
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
+	-DZLIB_COMPAT=ON \
 	-G Ninja
 
 %ninja_build
@@ -93,10 +105,10 @@ LDFLAGS="%{ldflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
 %files -n %{libname}
 %license LICENSE.md
 %doc README.md
-%{_libdir}/libz-ng.so.%{major}*
+%{_libdir}/libz*.so.%{major}*
 
 %files -n %{develname}
-%{_includedir}/zconf-ng.h
-%{_includedir}/zlib-ng.h
-%{_libdir}/libz-ng.so
-%{_libdir}/pkgconfig/%{name}.pc
+%{_includedir}/*.h
+%{_includedir}/*.h
+%{_libdir}/libz*.so
+%{_libdir}/pkgconfig/*.pc
