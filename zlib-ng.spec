@@ -1,6 +1,6 @@
 # (tpg) when ready to ditch zlib
 # set bcond_without replace_zlib
-%bcond_with replace_zlib
+%bcond_without replace_zlib
 
 %global optflags %{optflags} -O3
 
