@@ -1,6 +1,7 @@
-# (tpg) when ready to ditch zlib
-# set bcond_without replace_zlib
-%bcond_with replace_zlib
+# when building for old (pre 4.3) releases,
+# set bcond_with replace_zlib
+# to avoid replacing traditional zlib
+%bcond_without replace_zlib
 
 %global optflags %{optflags} -O3
 
@@ -61,7 +62,7 @@ Summary:	Development files for %{name}
 Group:		Development/C
 Requires:	%{libname} = %{EVRD}
 %if %{with replace_zlib}
-%rename		%{_lib}zlib-devel
+%rename		%{_lib}z-devel
 %rename		zlib-devel
 %rename		zlib1-devel
 Provides:	%{_lib}z-devel = %{EVRD}
@@ -77,6 +78,7 @@ developing application that use %{name}.
 Summary:	%{summary} (32-bit)
 Group:		System/Libraries
 %if %{with replace_zlib}
+%rename		libz-devel
 Conflicts:	zlib1 < 1.2.6-3
 Provides:	libz1 = %{EVRD}
 Obsoletes:	libz1 < 2.0.1
@@ -105,10 +107,7 @@ developing application that use %{name} (32-bit).
 
 %build
 %ifarch %{x86_64}
-mkdir build32
-cd build32
-CC=gcc CXX=g++ CFLAGS="$(echo %{optflags} |sed -e 's,-m64,-m32,g') -m32" cmake ../ -DCMAKE_INSTALL_PREFIX="%{_prefix}" \
-	-DINSTALL_LIB_DIR="%{_prefix}/lib" \
+%cmake32 \
 %if %{with replace_zlib}
 	-DZLIB_COMPAT=ON \
 %endif
@@ -132,7 +131,7 @@ export LD_LIBRARY_PATH="$(pwd)"
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
 %if %{with replace_zlib}
-	-DZLIB_COMPAT=OFF \
+	-DZLIB_COMPAT=ON \
 %endif
 	-G Ninja
 
@@ -185,6 +184,5 @@ install -d %{buildroot}%{_prefix}/lib
 
 %files -n %{dev32name}
 %{_prefix}/lib/libz*.so
-%{_prefix}/lib/libz*.a
 %{_prefix}/lib/pkgconfig/*.pc
 %endif
