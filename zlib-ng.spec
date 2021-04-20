@@ -1,6 +1,6 @@
 # (tpg) when ready to ditch zlib
 # set bcond_without replace_zlib
-%bcond_with replace_zlib
+%bcond_without replace_zlib
 
 %global optflags %{optflags} -O3
 
@@ -28,7 +28,7 @@
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
 Version:	2.0.2
-Release:	1
+Release:	2
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
