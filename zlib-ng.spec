@@ -32,11 +32,12 @@
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
 Version:	2.0.2
-Release:	4
+Release:	5
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
 Source0:	https://github.com/zlib-ng/zlib-ng/archive/%{version}/%{name}-%{version}.tar.gz
+Patch0:		zlib-ng-2.0.2-pkgconfig-fix-libtool-mess.patch
 BuildRequires:	cmake
 BuildRequires:	ninja
 

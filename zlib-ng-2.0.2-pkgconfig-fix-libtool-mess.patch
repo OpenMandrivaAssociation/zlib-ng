@@ -1,0 +1,18 @@
+diff -up zlib-ng-2.0.2/zlib.pc.cmakein.omv~ zlib-ng-2.0.2/zlib.pc.cmakein
+--- zlib-ng-2.0.2/zlib.pc.cmakein.omv~	2021-04-27 18:16:11.028039700 +0200
++++ zlib-ng-2.0.2/zlib.pc.cmakein	2021-04-27 18:17:49.349133459 +0200
+@@ -1,6 +1,6 @@
+ prefix=@CMAKE_INSTALL_PREFIX@
+ exec_prefix=${prefix}
+-libdir=@PC_LIB_INSTALL_DIR@
++libdir=${prefix}/@PC_LIB_INSTALL_DIR@
+ sharedlibdir=${libdir}
+ includedir=@PC_INC_INSTALL_DIR@
+ 
+@@ -9,5 +9,4 @@ Description: zlib-ng compression library
+ Version: @ZLIB_FULL_VERSION@
+ 
+ Requires:
+-Libs: -L${libdir} -L${sharedlibdir} -lz@SUFFIX@
+-Cflags: -I${includedir}
++Libs: -lz@SUFFIX@
