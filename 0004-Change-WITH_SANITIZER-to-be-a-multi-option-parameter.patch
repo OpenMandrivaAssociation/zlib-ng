@@ -1,0 +1,74 @@
+From 89992dfbf11c3665f9c7808237a9ba865beb82f2 Mon Sep 17 00:00:00 2001
+From: Hans Kristian Rosbach <hk-git@circlestorm.org>
+Date: Sun, 13 Jun 2021 15:11:23 +0200
+Subject: [PATCH 04/13] Change WITH_SANITIZER to be a multi-option parameter
+ (for ccmake etc). Add support for selcting Thread sanitizer.
+
+---
+ CMakeLists.txt               |  7 ++++++-
+ cmake/detect-sanitizer.cmake | 12 +++++++++++-
+ 2 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d7f8924..7d99ec3 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -78,7 +78,6 @@ add_option(WITH_GZFILEOP "Compile with support for gzFile related functions" ON)
+ add_option(ZLIB_COMPAT "Compile with zlib compatible API" OFF)
+ add_option(ZLIB_ENABLE_TESTS "Build test binaries" ON)
+ add_option(ZLIB_DUAL_LINK "Dual link tests against system zlib" OFF)
+-add_option(WITH_SANITIZER "Build with sanitizer (Memory, Address, Undefined)" OFF)
+ add_option(WITH_FUZZERS "Build test/fuzz" OFF)
+ add_option(WITH_OPTIM "Build with optimisation" ON)
+ add_option(WITH_NEW_STRATEGIES "Use new strategies" ON)
+@@ -90,6 +89,10 @@ add_option(WITH_INFLATE_STRICT "Build with strict inflate distance checking" OFF
+ add_option(WITH_INFLATE_ALLOW_INVALID_DIST "Build with zero fill for inflate invalid distances" OFF)
+ add_option(WITH_UNALIGNED "Support unaligned reads on platforms that support it" ON)
+ 
++# Add multi-choice option
++set(WITH_SANITIZER AUTO CACHE STRING "Enable sanitizer support")
++set_property(CACHE WITH_SANITIZER PROPERTY STRINGS "Memory" "Address" "Undefined" "Thread")
++
+ if(BASEARCH_ARM_FOUND)
+     add_option(WITH_ACLE "Build with ACLE" ON)
+     add_option(WITH_NEON "Build with NEON intrinsics" ON)
+@@ -370,6 +373,8 @@ if(WITH_SANITIZER STREQUAL "Address")
+     add_address_sanitizer()
+ elseif(WITH_SANITIZER STREQUAL "Memory")
+     add_memory_sanitizer()
++elseif(WITH_SANITIZER STREQUAL "Thread")
++    add_thread_sanitizer()
+ elseif(WITH_SANITIZER STREQUAL "Undefined")
+     add_undefined_sanitizer()
+ endif()
+diff --git a/cmake/detect-sanitizer.cmake b/cmake/detect-sanitizer.cmake
+index 172a8d5..b0a0236 100644
+--- a/cmake/detect-sanitizer.cmake
++++ b/cmake/detect-sanitizer.cmake
+@@ -69,6 +69,16 @@ macro(add_memory_sanitizer)
+     endif()
+ endmacro()
+ 
++macro(add_thread_sanitizer)
++    check_sanitizer_support("thread" supported_checks)
++    if(NOT ${supported_checks} STREQUAL "")
++        message(STATUS "Thread sanitizer is enabled: ${supported_checks}")
++        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=${supported_checks}")
++    else()
++        message(STATUS "Thread sanitizer is not supported")
++    endif()
++endmacro()
++
+ macro(add_undefined_sanitizer)
+     set(known_checks
+         array-bounds
+@@ -120,4 +130,4 @@ macro(add_undefined_sanitizer)
+     else()
+         message(STATUS "UNdefined behavior sanitizer is not supported")
+     endif()
+-endmacro()
+\ No newline at end of file
++endmacro()
+-- 
+2.32.0
+

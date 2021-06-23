@@ -1,0 +1,34 @@
+From 77966c02cda6f509594791879573582908a3a718 Mon Sep 17 00:00:00 2001
+From: Ilya Leoshkevich <iii@linux.ibm.com>
+Date: Mon, 14 Jun 2021 21:03:51 +0200
+Subject: [PATCH 07/13] Fix MSVC warnings in hash_head_0.c test
+
+---
+ test/hash_head_0.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/test/hash_head_0.c b/test/hash_head_0.c
+index 128ae34..1f615c5 100644
+--- a/test/hash_head_0.c
++++ b/test/hash_head_0.c
+@@ -63,14 +63,14 @@ int main() {
+         return EXIT_FAILURE;
+     }
+ 
+-    strm.avail_in = next_in + sizeof(next_in) - strm.next_in;
+-    strm.avail_out = next_out + sizeof(next_out) - strm.next_out;
++    strm.avail_in = (uint32_t)(next_in + sizeof(next_in) - strm.next_in);
++    strm.avail_out = (uint32_t)(next_out + sizeof(next_out) - strm.next_out);
+     ret = PREFIX(deflate)(&strm, Z_FINISH);
+     if (ret != Z_STREAM_END) {
+         fprintf(stderr, "deflate() failed with code %d\n", ret);
+         return EXIT_FAILURE;
+     }
+-    uint32_t compressed_size = strm.next_out - next_out;
++    uint32_t compressed_size = (uint32_t)(strm.next_out - next_out);
+ 
+     ret = PREFIX(deflateEnd)(&strm);
+     if (ret != Z_OK) {
+-- 
+2.32.0
+

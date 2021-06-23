@@ -1,0 +1,31 @@
+From 5d2ce271dc2f0d074ce315753bff1232bb779d53 Mon Sep 17 00:00:00 2001
+From: Nathan Moinvaziri <nathan@nathanm.com>
+Date: Wed, 16 Jun 2021 08:11:33 -0700
+Subject: [PATCH 06/13] Added aarch64 to pigz GitHub actions workflow.
+
+---
+ .github/workflows/pigz.yml | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/.github/workflows/pigz.yml b/.github/workflows/pigz.yml
+index 92f9ee6..8260c82 100644
+--- a/.github/workflows/pigz.yml
++++ b/.github/workflows/pigz.yml
+@@ -36,6 +36,14 @@ jobs:
+             codecov: ubuntu_clang_pigz_no_threads
+             cmake-args: -DWITH_THREADS=OFF
+ 
++          - name: Ubuntu GCC AARCH64
++            os: ubuntu-latest
++            compiler: aarch64-linux-gnu-gcc
++            cmake-args: -DCMAKE_TOOLCHAIN_FILE=../../cmake/toolchain-aarch64.cmake
++            packages: qemu qemu-user gcc-aarch64-linux-gnu libc-dev-arm64-cross
++            qemu-run: qemu-aarch64
++            codecov: ubuntu_gcc_pigz_aarch64
++
+     steps:
+     - name: Checkout repository
+       uses: actions/checkout@v2
+-- 
+2.32.0
+
