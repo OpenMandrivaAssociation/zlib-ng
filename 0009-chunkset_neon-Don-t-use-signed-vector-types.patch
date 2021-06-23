@@ -1,0 +1,38 @@
+From 61a5776eb6538efb08c50a74a2e723f678980d99 Mon Sep 17 00:00:00 2001
+From: Mika Lindqvist <postmaster@raasu.org>
+Date: Fri, 18 Jun 2021 23:15:28 +0300
+Subject: [PATCH 09/13] [chunkset_neon] Don't use signed vector types. * There
+ is no need to convert between unsigned and signed vector types. All relevant
+ intrinsics have versions for all unsigned vector types.
+
+---
+ arch/arm/chunkset_neon.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/chunkset_neon.c b/arch/arm/chunkset_neon.c
+index 22c3785..b1fcb24 100644
+--- a/arch/arm/chunkset_neon.c
++++ b/arch/arm/chunkset_neon.c
+@@ -25,15 +25,15 @@ static inline void chunkmemset_1(uint8_t *from, chunk_t *chunk) {
+ }
+ 
+ static inline void chunkmemset_2(uint8_t *from, chunk_t *chunk) {
+-    int16_t tmp;
++    uint16_t tmp;
+     memcpy(&tmp, from, 2);
+-    *chunk = vreinterpretq_u8_s16(vdupq_n_s16(tmp));
++    *chunk = vreinterpretq_u8_u16(vdupq_n_u16(tmp));
+ }
+ 
+ static inline void chunkmemset_4(uint8_t *from, chunk_t *chunk) {
+-    int32_t tmp;
++    uint32_t tmp;
+     memcpy(&tmp, from, 4);
+-    *chunk = vreinterpretq_u8_s32(vdupq_n_s32(tmp));
++    *chunk = vreinterpretq_u8_u32(vdupq_n_u32(tmp));
+ }
+ 
+ static inline void chunkmemset_8(uint8_t *from, chunk_t *chunk) {
+-- 
+2.32.0
+
