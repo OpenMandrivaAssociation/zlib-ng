@@ -31,28 +31,17 @@
 
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
-Version:	2.0.4
-Release:	2
+Version:	2.0.5
+Release:	1
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
 Source0:	https://github.com/zlib-ng/zlib-ng/archive/%{version}/%{name}-%{version}.tar.gz
 Patch0:		zlib-ng-2.0.2-pkgconfig-fix-libtool-mess.patch
+# https://github.com/zlib-ng/zlib-ng/pull/1023
+Patch1:		0001-Fix-Z_SOLO-mode.patch
 # (tpg) patches from upstream stable branch
-Patch100:	0000-Must-use-safe-chunk-copies-due-to-inflateBack-using-.patch
-Patch101:	0001-Only-need-to-add-rem-if-it-is-greater-than-zero-in-c.patch
-Patch102:	0002-Calculate-from-and-out-buffer-advance-only-once-in-c.patch
-Patch103:	0003-Added-assert-in-chunkcopy-to-detect-invalid-length.patch
-Patch104:	0004-Change-WITH_SANITIZER-to-be-a-multi-option-parameter.patch
-Patch105:	0005-Added-Z_UNUSED-define-for-ignore-unused-variables.patch
-Patch106:	0006-Added-aarch64-to-pigz-GitHub-actions-workflow.patch
-Patch107:	0007-Fix-MSVC-warnings-in-hash_head_0.c-test.patch
-Patch108:	0008-Reduce-number-of-branches-in-partial-chunk-copy-base.patch
-Patch109:	0009-chunkset_neon-Don-t-use-signed-vector-types.patch
-Patch110:	0010-chunkset_neon-Use-vdupq_n_u64.patch
-Patch111:	0011-chunkcopy_safe-Don-t-call-chunkcopy.patch
-Patch112:	0012-Cast-calculation-of-safe-length-to-unsigned-int-to-a.patch
-Patch113:	0013-functable-Add-missing-call-to-cpu_check_features.patch
+# (currently none)
 
 BuildRequires:	cmake
 BuildRequires:	ninja
