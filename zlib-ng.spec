@@ -3,6 +3,8 @@
 # to avoid replacing traditional zlib
 %bcond_without replace_zlib
 
+# Please don't disable static libraries -- qemu needs them
+
 %global optflags %{optflags} -O3
 
 %define major 1
@@ -10,16 +12,20 @@
 
 %define libname %mklibname z %{major}
 %define develname %mklibname z -d
+%define sdevelname %mklibname z -d -s
 
 %define nglibname %mklibname z-ng %{major}
 %define ngdevelname %mklibname z-ng -d
+%define ngsdevelname %mklibname z-ng -d -s
 
 %ifarch %{x86_64}
 %define lib32name libz%{major}
 %define dev32name libz-devel
+%define sdev32name libz-static-devel
 
 %define nglib32name libz-ng%{major}
 %define ngdev32name libz-ng-devel
+%define ngsdev32name libz-ng-static-devel
 %endif
 
 # (tpg) enable PGO build
@@ -32,7 +38,7 @@
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
 Version:	2.0.5
-Release:	1
+Release:	2
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
@@ -69,7 +75,17 @@ Requires:	%{libname} = %{EVRD}
 %rename		zlib1-devel
 
 %description -n %{develname}
-The %{name}-devel package contains static libraries and header files for
+The %{name}-devel package contains header files for
+developing application that use %{name}.
+
+%package -n %{sdevelname}
+Summary:	Static libraries for %{name}
+Group:		Development/C
+Requires:	%{develname} = %{EVRD}
+Provides:	zlib-static-devel = %{EVRD}
+
+%description -n %{sdevelname}
+The %{name}-static-devel package contains static libraries for
 developing application that use %{name}.
 
 %ifarch %{x86_64}
@@ -89,7 +105,17 @@ Requires:	%{develname} = %{version}-%{release}
 %rename		zlib-devel
 
 %description -n %{dev32name}
-The %{name}-devel package contains static libraries and header files for
+The %{name}-devel package contains header files for
+developing application that use %{name} (32-bit).
+
+%package -n %{sdev32name}
+Summary:	Static libraries for %{name} (32-bit)
+Group:		Development/C
+Requires:	%{dev32name} = %{version}-%{release}
+%rename		zlib-devel
+
+%description -n %{sdev32name}
+The %{name}-devel package contains static libraries for
 developing application that use %{name} (32-bit).
 %endif
 
@@ -106,7 +132,16 @@ Group:		Development/C
 Requires:	%{nglibname} = %{EVRD}
 
 %description -n %{ngdevelname}
-The %{name}-devel package contains static libraries and header files for
+The %{name}-devel package contains header files for
+developing application that use %{name}.
+
+%package -n %{ngsdevelname}
+Summary:	Static libraries for %{name}
+Group:		Development/C
+Requires:	%{ngdevelname} = %{EVRD}
+
+%description -n %{ngsdevelname}
+The %{name}-devel package contains static libraries for
 developing application that use %{name}.
 
 %ifarch %{x86_64}
@@ -124,7 +159,16 @@ Requires:	%{nglib32name} = %{version}-%{release}
 Requires:	%{ngdevelname} = %{version}-%{release}
 
 %description -n %{ngdev32name}
-The %{name}-devel package contains static libraries and header files for
+The %{name}-devel package contains header files for
+developing application that use %{name} (32-bit).
+
+%package -n %{ngsdev32name}
+Summary:	Static libraries for %{name} (32-bit)
+Group:		Development/C
+Requires:	%{ngdev32name} = %{version}-%{release}
+
+%description -n %{ngsdev32name}
+The %{name}-devel package contains static libraries for
 developing application that use %{name} (32-bit).
 %endif
 
@@ -132,10 +176,16 @@ developing application that use %{name} (32-bit).
 %autosetup -p1
 
 %build
+# zlib-ng uses nonstandard behavior for BUILD_SHARED_LIBS/BUILD_STATIC_LIBS
+# BUILD_SHARED_LIBS=ON here means build ONLY shared libs
+# BUILD_STATIC_LIBS=ON is ignored
+# BUILD_SHARED_LIBS unset means build both shared and static libs.
+
 %ifarch %{x86_64}
 %if %{with replace_zlib}
 %cmake32 \
 	-DZLIB_COMPAT:BOOL=ON \
+	-UBUILD_SHARED_LIBS \
 	-G Ninja
 
 %ninja_build
@@ -145,6 +195,7 @@ cd ..
 CMAKE_BUILD_DIR32=build32-ng \
 %cmake32 \
 	-DZLIB_COMPAT:BOOL=OFF \
+	-UBUILD_SHARED_LIBS \
 	-G Ninja
 
 %ninja_build
@@ -166,6 +217,7 @@ export LD_LIBRARY_PATH="$(pwd)"
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
 	-DZLIB_COMPAT:BOOL=ON \
+	-UBUILD_SHARED_LIBS \
 	-G Ninja
 
 %ninja_build
@@ -189,6 +241,7 @@ LDFLAGS="%{ldflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
 %if %{with replace_zlib}
 	-DZLIB_COMPAT:BOOL=ON \
 %endif
+	-UBUILD_SHARED_LIBS \
 	-G Ninja
 
 %ninja_build
@@ -211,6 +264,7 @@ export CMAKE_BUILD_DIR=build-ng
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
 	-DZLIB_COMPAT:BOOL=OFF \
+	-UBUILD_SHARED_LIBS \
 	-G Ninja
 
 %ninja_build
@@ -232,6 +286,7 @@ LDFLAGS="%{ldflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
 	-DZLIB_COMPAT:BOOL=OFF \
+	-UBUILD_SHARED_LIBS \
 	-G Ninja
 
 %ninja_build
@@ -271,6 +326,9 @@ install -d %{buildroot}%{_prefix}/lib
 %{_includedir}/zconf.h
 %{_libdir}/libz.so
 %{_libdir}/pkgconfig/zlib.pc
+
+%files -n %{sdevelname}
+%{_libdir}/libz.a
 %endif
 
 %files -n %{ngdevelname}
@@ -278,6 +336,9 @@ install -d %{buildroot}%{_prefix}/lib
 %{_includedir}/zconf-ng.h
 %{_libdir}/libz-ng.so
 %{_libdir}/pkgconfig/zlib-ng.pc
+
+%files -n %{ngsdevelname}
+%{_libdir}/libz-ng.a
 
 %ifarch %{x86_64}
 %if %{with replace_zlib}
@@ -287,6 +348,9 @@ install -d %{buildroot}%{_prefix}/lib
 %files -n %{dev32name}
 %{_prefix}/lib/libz.so
 %{_prefix}/lib/pkgconfig/zlib.pc
+
+%files -n %{sdev32name}
+%{_prefix}/lib/libz.a
 %endif
 
 %files -n %{nglib32name}
@@ -295,4 +359,7 @@ install -d %{buildroot}%{_prefix}/lib
 %files -n %{ngdev32name}
 %{_prefix}/lib/libz-ng.so
 %{_prefix}/lib/pkgconfig/zlib-ng.pc
+
+%files -n %{ngsdev32name}
+%{_prefix}/lib/libz-ng.a
 %endif
