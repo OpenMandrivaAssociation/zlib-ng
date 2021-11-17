@@ -38,7 +38,7 @@
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
 Version:	2.0.5
-Release:	2
+Release:	3
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
@@ -204,12 +204,11 @@ cd ..
 
 %if %{with pgo}
 %if %{with replace_zlib}
-CFLAGS="%{optflags} -fprofile-instr-generate"
-CXXFLAGS="%{optflags} -fprofile-instr-generate"
+CFLAGS="%{optflags} -fprofile-generate"
+CXXFLAGS="%{optflags} -fprofile-generate"
 FFLAGS="$CFLAGS"
 FCFLAGS="$CFLAGS"
-LDFLAGS="%{build_ldflags} -fprofile-instr-generate"
-export LLVM_PROFILE_FILE=%{name}-%p.profile.d
+LDFLAGS="%{build_ldflags} -fprofile-generate"
 export LD_LIBRARY_PATH="$(pwd)"
 
 # zlib-ng uses a different macro for library directory.
@@ -224,16 +223,15 @@ export LD_LIBRARY_PATH="$(pwd)"
 
 %ninja_test ||:
 unset LD_LIBRARY_PATH
-unset LLVM_PROFILE_FILE
-llvm-profdata merge --output=../%{name}.profile *.profile.d
-rm -f *.profile.d
+llvm-profdata merge -output=../%{name}-llvm.profdata *.profraw
+rm -f *.profraw
 ninja clean
 cd ..
 rm -rf build
 
-CFLAGS="%{optflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
-CXXFLAGS="%{optflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
-LDFLAGS="%{ldflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
+CFLAGS="%{optflags} -fprofile-use=$(realpath %{name}-llvm.profdata)" \
+CXXFLAGS="%{optflags} -fprofile-use=$(realpath %{name}-llvm.profdata)" \
+LDFLAGS="%{ldflags} -fprofile-use=$(realpath %{name}-llvm.profdata)" \
 %endif
 %cmake \
 	-DWITH_SANITIZERS=ON \
@@ -250,12 +248,11 @@ cd ..
 
 %if %{with replace_zlib}
 %if %{with pgo}
-CFLAGS="%{optflags} -fprofile-instr-generate"
-CXXFLAGS="%{optflags} -fprofile-instr-generate"
+CFLAGS="%{optflags} -fprofile-generate"
+CXXFLAGS="%{optflags} -fprofile-generate"
 FFLAGS="$CFLAGS"
 FCFLAGS="$CFLAGS"
-LDFLAGS="%{build_ldflags} -fprofile-instr-generate"
-export LLVM_PROFILE_FILE=%{name}-%p.profile.d
+LDFLAGS="%{build_ldflags} -fprofile-generate"
 export LD_LIBRARY_PATH="$(pwd)"
 
 export CMAKE_BUILD_DIR=build-ng
@@ -271,16 +268,15 @@ export CMAKE_BUILD_DIR=build-ng
 
 %ninja_test ||:
 unset LD_LIBRARY_PATH
-unset LLVM_PROFILE_FILE
-llvm-profdata merge --output=../%{name}.profile *.profile.d
-rm -f *.profile.d
+llvm-profdata merge -output=../%{name}-llvm.profdata *.profraw
+rm -f *.profraw
 ninja clean
 cd ..
 rm -rf build-ng
 
-CFLAGS="%{optflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
-CXXFLAGS="%{optflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
-LDFLAGS="%{ldflags} -fprofile-instr-use=$(realpath %{name}.profile)" \
+CFLAGS="%{optflags} -fprofile-use=$(realpath %{name}-llvm.profdata)" \
+CXXFLAGS="%{optflags} -fprofile-use=$(realpath %{name}-llvm.profdata)" \
+LDFLAGS="%{ldflags} -fprofile-use=$(realpath %{name}-llvm.profdata)" \
 %endif
 %cmake \
 	-DWITH_SANITIZERS=ON \
