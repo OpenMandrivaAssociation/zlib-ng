@@ -38,7 +38,7 @@
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
 Version:	2.0.5
-Release:	4
+Release:	5
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
@@ -222,7 +222,7 @@ LDFLAGS="%{build_ldflags} -fprofile-generate" \
 
 %ninja_test ||:
 unset LD_LIBRARY_PATH
-llvm-profdata merge --output=../%{name}-llvm.profdata *.profraw
+llvm-profdata merge --output=../%{name}-llvm.profdata $(find . -name "*.profraw" -type f)
 PROFDATA="$(realpath ../%{name}-llvm.profdata)"
 rm -f *.profraw
 ninja clean
@@ -267,7 +267,7 @@ LDFLAGS="%{build_ldflags} -fprofile-generate" \
 
 %ninja_test ||:
 unset LD_LIBRARY_PATH
-llvm-profdata merge --output=../%{name}-llvm.profdata *.profraw
+llvm-profdata merge --output=../%{name}-llvm.profdata $(find . -name "*.profraw" -type f)
 PROFDATA="$(realpath ../%{name}-llvm.profdata)"
 rm -f *.profraw
 ninja clean
