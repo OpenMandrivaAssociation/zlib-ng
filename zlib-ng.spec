@@ -29,23 +29,17 @@
 %endif
 
 # (tpg) enable PGO build
-%ifnarch riscv64
 %bcond_without pgo
-%else
-%bcond_with pgo
-%endif
 
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
-Version:	2.0.5
-Release:	5
+Version:	2.0.6
+Release:	1
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
 Source0:	https://github.com/zlib-ng/zlib-ng/archive/%{version}/%{name}-%{version}.tar.gz
 Patch0:		zlib-ng-2.0.2-pkgconfig-fix-libtool-mess.patch
-# https://github.com/zlib-ng/zlib-ng/pull/1023
-Patch1:		0001-Fix-Z_SOLO-mode.patch
 # (tpg) patches from upstream stable branch
 # (currently none)
 
