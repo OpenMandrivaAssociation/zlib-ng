@@ -34,7 +34,7 @@
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
 Version:	2.0.6
-Release:	2
+Release:	3
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
@@ -126,7 +126,6 @@ Group:		System/Libraries
 Summary:	Development files for %{name}
 Group:		Development/C
 Requires:	%{nglibname} = %{EVRD}
-Requires:	libc6
 
 %description -n %{ngdevelname}
 The %{name}-devel package contains header files for
