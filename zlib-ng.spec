@@ -7,6 +7,10 @@
 
 %global optflags %{optflags} -O3
 
+# (tpg) use LLVM/polly for polyhedra optimization and automatic vector code generation
+%define pollyflags -mllvm -polly -mllvm -polly-run-dce -mllvm -polly-run-inliner -mllvm -polly-isl-arg=--no-schedule-serialize-sccs -mllvm -polly-ast-use-context -mllvm -polly-detect-keep-going -mllvm -polly-vectorizer=stripmine
+# "-mllvm -polly-invariant-load-hoisting" removed for now because of https://github.com/llvm/llvm-project/issues/57413
+
 %define major 1
 %define ngmajor 2
 
@@ -34,7 +38,7 @@
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
 Version:	2.0.6
-Release:	4
+Release:	5
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
@@ -202,8 +206,8 @@ cd ..
 %if %{with replace_zlib}
 export LD_LIBRARY_PATH="$(pwd)"
 
-CFLAGS="%{optflags} -fprofile-generate" \
-CXXFLAGS="%{optflags} -fprofile-generate" \
+CFLAGS="%{optflags} -fprofile-generate %{pollyflags}" \
+CXXFLAGS="%{optflags} -fprofile-generate %{pollyflags}" \
 FFLAGS="$CFLAGS" \
 FCFLAGS="$CFLAGS" \
 LDFLAGS="%{build_ldflags} -fprofile-generate" \
@@ -225,8 +229,8 @@ ninja clean
 cd ..
 rm -rf build
 
-CFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
-CXXFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
+CFLAGS="%{optflags} -fprofile-use=$PROFDATA %{pollyflags}" \
+CXXFLAGS="%{optflags} -fprofile-use=$PROFDATA %{pollyflags}" \
 LDFLAGS="%{build_ldflags} -fprofile-use=$PROFDATA" \
 %endif
 %cmake \
@@ -247,8 +251,8 @@ cd ..
 export LD_LIBRARY_PATH="$(pwd)"
 export CMAKE_BUILD_DIR=build-ng
 
-CFLAGS="%{optflags} -fprofile-generate" \
-CXXFLAGS="%{optflags} -fprofile-generate" \
+CFLAGS="%{optflags} -fprofile-generate %{pollyflags}" \
+CXXFLAGS="%{optflags} -fprofile-generate %{pollyflags}" \
 FFLAGS="$CFLAGS" \
 FCFLAGS="$CFLAGS" \
 LDFLAGS="%{build_ldflags} -fprofile-generate" \
@@ -270,8 +274,8 @@ ninja clean
 cd ..
 rm -rf build-ng
 
-CFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
-CXXFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
+CFLAGS="%{optflags} -fprofile-use=$PROFDATA %{pollyflags}" \
+CXXFLAGS="%{optflags} -fprofile-use=$PROFDATA %{pollyflags}" \
 LDFLAGS="%{build_ldflags} -fprofile-use=$PROFDATA" \
 %endif
 %cmake \
