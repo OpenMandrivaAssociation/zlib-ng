@@ -8,9 +8,7 @@
 %global optflags %{optflags} -O3
 
 # (tpg) use LLVM/polly for polyhedra optimization and automatic vector code generation
-# (tpg) 2022-09-11 disable this for now
-%define pollyflags %{nil}
-# -mllvm -polly -mllvm -polly-run-dce -mllvm -polly-run-inliner -mllvm -polly-isl-arg=--no-schedule-serialize-sccs -mllvm -polly-ast-use-context -mllvm -polly-detect-keep-going -mllvm -polly-vectorizer=stripmine
+%define pollyflags -mllvm -polly -mllvm -polly-run-dce -mllvm -polly-run-inliner -mllvm -polly-isl-arg=--no-schedule-serialize-sccs -mllvm -polly-ast-use-context -mllvm -polly-detect-keep-going -mllvm -polly-vectorizer=stripmine
 # "-mllvm -polly-invariant-load-hoisting" removed for now because of https://github.com/llvm/llvm-project/issues/57413
 
 %define major 1
@@ -40,7 +38,7 @@
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
 Version:	2.0.6
-Release:	6
+Release:	7
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
