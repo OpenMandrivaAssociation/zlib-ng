@@ -38,7 +38,7 @@
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
 Version:	2.0.6
-Release:	7
+Release:	8
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
@@ -309,6 +309,7 @@ install -d %{buildroot}%{_prefix}/lib
 %license LICENSE.md
 %doc README.md
 %{_libdir}/libz.so.%{major}*
+%{_libdir}/libz.so
 %endif
 
 %files -n %{nglibname}
@@ -320,7 +321,6 @@ install -d %{buildroot}%{_prefix}/lib
 %files -n %{develname}
 %{_includedir}/zlib.h
 %{_includedir}/zconf.h
-%{_libdir}/libz.so
 %{_libdir}/pkgconfig/zlib.pc
 
 %files -n %{sdevelname}
@@ -340,9 +340,9 @@ install -d %{buildroot}%{_prefix}/lib
 %if %{with replace_zlib}
 %files -n %{lib32name}
 %{_prefix}/lib/libz.so.%{major}*
+%{_prefix}/lib/libz.so
 
 %files -n %{dev32name}
-%{_prefix}/lib/libz.so
 %{_prefix}/lib/pkgconfig/zlib.pc
 
 %files -n %{sdev32name}
