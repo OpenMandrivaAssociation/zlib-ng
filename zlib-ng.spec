@@ -36,8 +36,8 @@
 
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
-Version:	2.0.6
-Release:	11
+Version:	2.0.7
+Release:	1
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
