@@ -32,7 +32,11 @@
 %endif
 
 # (tpg) enable PGO build
+%if %{cross_compiling}
+%bcond_with pgo
+%else
 %bcond_without pgo
+%endif
 
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
@@ -232,6 +236,7 @@ CFLAGS="%{optflags} -fprofile-use=$PROFDATA %{pollyflags}" \
 CXXFLAGS="%{optflags} -fprofile-use=$PROFDATA %{pollyflags}" \
 LDFLAGS="%{build_ldflags} -fprofile-use=$PROFDATA" \
 %endif
+%endif
 %cmake \
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
@@ -243,12 +248,11 @@ LDFLAGS="%{build_ldflags} -fprofile-use=$PROFDATA" \
 
 %ninja_build
 cd ..
-%endif
 
 %if %{with replace_zlib}
+export CMAKE_BUILD_DIR=build-ng
 %if %{with pgo}
 export LD_LIBRARY_PATH="$(pwd)"
-export CMAKE_BUILD_DIR=build-ng
 
 CFLAGS="%{optflags} -fprofile-generate %{pollyflags}" \
 CXXFLAGS="%{optflags} -fprofile-generate %{pollyflags}" \
