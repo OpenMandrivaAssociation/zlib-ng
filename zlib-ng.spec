@@ -315,20 +315,20 @@ check_convert_bitcode() {
 
     if printf '%s\n' "${llvm_file_type}" | grep -q "LLVM IR bitcode"; then
 # recompile without LTO
-    clang %{optflags} -fno-lto -Wno-unused-command-line-argument -x ir ${llvm_file_name} -c -o ${llvm_file_name}
+    clang -target %{_target_platform} %{optflags} -fno-lto -Wno-unused-command-line-argument -x ir ${llvm_file_name} -c -o ${llvm_file_name}
     elif printf '%s\n' "${llvm_file_type}" | grep -q "current ar archive"; then
     printf '%s\n' "Unpacking ar archive ${llvm_file_name} to check for LLVM bitcode components."
 # create archive stage for objects
     archive_stage=$(mktemp -d)
     archive=${llvm_file_name}
     cd ${archive_stage}
-    ar x ${archive}
+    llvm-ar x ${archive}
     for archived_file in $(find -not -type d); do
         check_convert_bitcode ${archived_file}
         printf '%s\n' "Repacking ${archived_file} into ${archive}."
-        ar r ${archive} ${archived_file}
+        llvm-ar r ${archive} ${archived_file}
     done
-    ranlib ${archive}
+    llvm-ranlib ${archive}
     cd ..
     fi
 }
