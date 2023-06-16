@@ -40,8 +40,8 @@
 
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
-Version:	2.0.7
-Release:	2
+Version:	2.1.2
+Release:	1
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
@@ -187,7 +187,8 @@ developing application that use %{name} (32-bit).
 %ifarch %{x86_64}
 %if %{with replace_zlib}
 %cmake32 \
-	-DZLIB_COMPAT:BOOL=ON \
+	-DZLIB_COMPAT=ON \
+	-DWITH_GTEST=OFF \
 	-UBUILD_SHARED_LIBS \
 	-G Ninja
 
@@ -197,7 +198,8 @@ cd ..
 
 CMAKE_BUILD_DIR32=build32-ng \
 %cmake32 \
-	-DZLIB_COMPAT:BOOL=OFF \
+	-DZLIB_COMPAT=OFF \
+	-DWITH_GTEST=OFF \
 	-UBUILD_SHARED_LIBS \
 	-G Ninja
 
@@ -217,7 +219,8 @@ LDFLAGS="%{build_ldflags} -fprofile-generate" \
 %cmake \
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
-	-DZLIB_COMPAT:BOOL=ON \
+	-DZLIB_COMPAT=ON \
+	-DWITH_GTEST=OFF \
 	-UBUILD_SHARED_LIBS \
 	-G Ninja
 
@@ -241,8 +244,9 @@ LDFLAGS="%{build_ldflags} -fprofile-use=$PROFDATA" \
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
 %if %{with replace_zlib}
-	-DZLIB_COMPAT:BOOL=ON \
+	-DZLIB_COMPAT=ON \
 %endif
+	-DWITH_GTEST=OFF \
 	-UBUILD_SHARED_LIBS \
 	-G Ninja
 
@@ -262,7 +266,8 @@ LDFLAGS="%{build_ldflags} -fprofile-generate" \
 %cmake \
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
-	-DZLIB_COMPAT:BOOL=OFF \
+	-DZLIB_COMPAT=OFF \
+	-DWITH_GTEST=OFF \
 	-UBUILD_SHARED_LIBS \
 	-G Ninja
 
@@ -284,7 +289,8 @@ LDFLAGS="%{build_ldflags} -fprofile-use=$PROFDATA" \
 %cmake \
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
-	-DZLIB_COMPAT:BOOL=OFF \
+	-DZLIB_COMPAT=OFF \
+	-DWITH_GTEST=OFF \
 	-UBUILD_SHARED_LIBS \
 	-G Ninja
 
@@ -353,6 +359,7 @@ done
 %files -n %{develname}
 %{_includedir}/zlib.h
 %{_includedir}/zconf.h
+%{_includedir}/zlib_name_mangling.h
 %{_libdir}/libz.so
 %{_libdir}/pkgconfig/zlib.pc
 
@@ -363,6 +370,7 @@ done
 %files -n %{ngdevelname}
 %{_includedir}/zlib-ng.h
 %{_includedir}/zconf-ng.h
+%{_includedir}/zlib_name_mangling-ng.h
 %{_libdir}/libz-ng.so
 %{_libdir}/pkgconfig/zlib-ng.pc
 
