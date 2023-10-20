@@ -217,6 +217,10 @@ FFLAGS="$CFLAGS" \
 FCFLAGS="$CFLAGS" \
 LDFLAGS="%{build_ldflags} -fprofile-generate" \
 %cmake \
+%ifarch %{aarch64}
+	-DWITH_ARMV6:BOOL=OFF \
+	-DWITH_NEON:BOOL=ON \
+%endif
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
 	-DZLIB_COMPAT=ON \
@@ -241,6 +245,10 @@ LDFLAGS="%{build_ldflags} -fprofile-use=$PROFDATA" \
 %endif
 %endif
 %cmake \
+%ifarch %{aarch64}
+	-DWITH_ARMV6:BOOL=OFF \
+	-DWITH_NEON:BOOL=ON \
+%endif
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
 %if %{with replace_zlib}
@@ -264,6 +272,10 @@ FFLAGS="$CFLAGS" \
 FCFLAGS="$CFLAGS" \
 LDFLAGS="%{build_ldflags} -fprofile-generate" \
 %cmake \
+%ifarch %{aarch64}
+	-DWITH_ARMV6:BOOL=OFF \
+	-DWITH_NEON:BOOL=ON \
+%endif
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
 	-DZLIB_COMPAT=OFF \
@@ -287,6 +299,10 @@ CXXFLAGS="%{optflags} -fprofile-use=$PROFDATA %{pollyflags}" \
 LDFLAGS="%{build_ldflags} -fprofile-use=$PROFDATA" \
 %endif
 %cmake \
+%ifarch %{aarch64}
+	-DWITH_ARMV6:BOOL=OFF \
+	-DWITH_NEON:BOOL=ON \
+%endif
 	-DWITH_SANITIZERS=ON \
 	-DINSTALL_LIB_DIR=%{_libdir} \
 	-DZLIB_COMPAT=OFF \
