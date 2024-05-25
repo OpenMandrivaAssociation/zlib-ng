@@ -359,6 +359,7 @@ install -d %{buildroot}%{_prefix}/lib
 %{_includedir}/zlib_name_mangling-ng.h
 %{_libdir}/libz-ng.so
 %{_libdir}/pkgconfig/zlib-ng.pc
+%{_libdir}/cmake/ZLIB/
 
 %files -n %{ngsdevelname}
 %{_libdir}/libz-ng.a
@@ -371,6 +372,7 @@ install -d %{buildroot}%{_prefix}/lib
 %files -n %{dev32name}
 %{_prefix}/lib/libz.so
 %{_prefix}/lib/pkgconfig/zlib.pc
+%{_prefix}/lib/cmake/ZLIB/
 
 %files -n %{sdev32name}
 %{_prefix}/lib/libz.a
