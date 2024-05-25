@@ -40,7 +40,7 @@
 
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
-Version:	2.1.5
+Version:	2.1.6
 Release:	1
 License:	zlib
 Group:		System/Libraries
@@ -359,6 +359,8 @@ install -d %{buildroot}%{_prefix}/lib
 %{_includedir}/zlib_name_mangling-ng.h
 %{_libdir}/libz-ng.so
 %{_libdir}/pkgconfig/zlib-ng.pc
+%{_libdir}/cmake/ZLIB/
+%{_libdir}/cmake/zlib-ng/
 
 %files -n %{ngsdevelname}
 %{_libdir}/libz-ng.a
@@ -371,6 +373,8 @@ install -d %{buildroot}%{_prefix}/lib
 %files -n %{dev32name}
 %{_prefix}/lib/libz.so
 %{_prefix}/lib/pkgconfig/zlib.pc
+%{_prefix}/lib/cmake/ZLIB/
+%{_prefix}/lib/cmake/zlib-ng/
 
 %files -n %{sdev32name}
 %{_prefix}/lib/libz.a
