@@ -40,7 +40,7 @@
 
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
-Version:	2.1.7
+Version:	2.2.1
 Release:	1
 License:	zlib
 Group:		System/Libraries
