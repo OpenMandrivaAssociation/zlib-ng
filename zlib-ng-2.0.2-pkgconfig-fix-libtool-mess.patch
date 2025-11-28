@@ -1,16 +1,16 @@
-diff -up zlib-ng-2.1.5/zlib.pc.cmakein.1~ zlib-ng-2.1.5/zlib.pc.cmakein
---- zlib-ng-2.1.5/zlib.pc.cmakein.1~	2023-11-27 12:26:56.000000000 +0000
-+++ zlib-ng-2.1.5/zlib.pc.cmakein	2023-11-27 15:59:58.533770597 +0000
-@@ -1,7 +1,7 @@
- prefix=@CMAKE_INSTALL_PREFIX@
+diff -up zlib-ng-2.3.1/zlib.pc.cmakein.1~ zlib-ng-2.3.1/zlib.pc.cmakein
+--- zlib-ng-2.3.1/zlib.pc.cmakein.1~	2025-11-27 15:43:58.000000000 +0100
++++ zlib-ng-2.3.1/zlib.pc.cmakein	2025-11-28 18:51:46.339671442 +0100
+@@ -2,7 +2,7 @@ prefix=@CMAKE_INSTALL_PREFIX@
  exec_prefix=${prefix}
  symbol_prefix=@ZLIB_SYMBOL_PREFIX@
+ bindir=@PC_BIN_INSTALL_DIR@
 -libdir=@PC_LIB_INSTALL_DIR@
 +libdir=${prefix}/@PC_LIB_INSTALL_DIR@
  sharedlibdir=${libdir}
  includedir=@PC_INC_INSTALL_DIR@
  
-@@ -10,5 +10,4 @@ Description: zlib-ng compression library
+@@ -11,5 +11,4 @@ Description: zlib-ng compression library
  Version: @ZLIB_FULL_VERSION@
  
  Requires:
