@@ -53,6 +53,11 @@ Patch1:		zlib-ng-2.3.3-inflate-security.patch
 
 BuildRequires:	cmake
 BuildRequires:	ninja
+# clang -m32 links libclang_rt.builtins from the i686 cross toolchain.
+# Without it the 32-bit build dies in the CMake compiler check.
+%ifarch %{x86_64}
+BuildRequires:	cross-i686-openmandriva-linux-gnu-clang
+%endif
 
 %description
 zlib-ng is a zlib replacement that provides optimizations for "next generation"
