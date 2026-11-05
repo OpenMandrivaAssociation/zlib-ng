@@ -41,14 +41,15 @@
 Summary:	Zlib replacement with optimizations
 Name:		zlib-ng
 Version:	2.3.3
-Release:	1
+Release:	2
 License:	zlib
 Group:		System/Libraries
 Url:		https://github.com/zlib-ng/zlib-ng
 Source0:	https://github.com/zlib-ng/zlib-ng/archive/%{version}/%{name}-%{version}.tar.gz
 Patch0:		zlib-ng-2.0.2-pkgconfig-fix-libtool-mess.patch
-# (tpg) patches from upstream stable branch
-# (currently none)
+# zlib 1.4: inflateBack copied a too-far distance, and an invalid CINFO
+# stuck in wbits across inflateReset. Upstream 2.3.3 and develop still do.
+Patch1:		zlib-ng-2.3.3-inflate-security.patch
 
 BuildRequires:	cmake
 BuildRequires:	ninja

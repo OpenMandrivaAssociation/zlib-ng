@@ -1,0 +1,48 @@
+--- zlib-ng-2.3.3/inflate.c	2026-02-03 22:10:03.000000000 +0100
++++ zlib-ng-2.3.3-patched/inflate.c	2026-11-05 23:01:33.777480292 +0100
+@@ -537,12 +537,15 @@ int32_t Z_EXPORT PREFIX(inflate)(PREFIX3
+             }
+             DROPBITS(4);
+             len = BITS(4) + 8;
+-            if (state->wbits == 0)
+-                state->wbits = len;
+-            if (len > MAX_WBITS || len > state->wbits) {
++            /* Reject before storing. An invalid CINFO (len > MAX_WBITS) used
++               to stick in wbits, and inflateReset kept it. The window buffer
++               is fixed at 32K, so a later inflate copied past it. */
++            if (len > MAX_WBITS || (state->wbits != 0 && len > state->wbits)) {
+                 SET_BAD("invalid window size");
+                 break;
+             }
++            if (state->wbits == 0)
++                state->wbits = len;
+ #ifdef INFLATE_STRICT
+             state->dmax = 1U << len;
+ #endif
+--- zlib-ng-2.3.3/infback.c	2026-02-03 22:10:03.000000000 +0100
++++ zlib-ng-2.3.3-patched/infback.c	2026-11-05 23:01:33.782674661 +0100
+@@ -364,8 +364,9 @@ int32_t Z_EXPORT PREFIX(inflateBack)(PRE
+             if (have >= INFLATE_FAST_MIN_HAVE &&
+                 left >= INFLATE_FAST_MIN_LEFT) {
+                 RESTORE();
+-                if (state->whave < state->wsize)
+-                    state->whave = state->wsize - left;
++                /* Do not treat bytes already written in this window as
++                   history before the window. That made inflate_fast copy
++                   uninitialized bytes for a too-far distance. */
+                 FUNCTABLE_CALL(inflate_fast)(strm, state->wsize);
+                 LOAD();
+                 break;
+@@ -456,12 +457,10 @@ int32_t Z_EXPORT PREFIX(inflateBack)(PRE
+                 state->offset += BITS(state->extra);
+                 DROPBITS(state->extra);
+             }
+-#ifdef INFLATE_STRICT
+             if (state->offset > state->wsize - (state->whave < state->wsize ? left : 0)) {
+                 SET_BAD("invalid distance too far back");
+                 break;
+             }
+-#endif
+             Tracevv((stderr, "inflate:         distance %u\n", state->offset));
+ 
+             /* copy match from window to output */
